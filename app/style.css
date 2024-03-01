@@ -19,7 +19,7 @@ text-align: left;
 }
 
 .btn-es{
-    background-color: #ffb600;
+    background-color: #36BDA2;
     color: white;
 }
 
@@ -28,17 +28,30 @@ text-align: left;
     background-color: #ffffff;
 }
 
-
 .app_column {
     align-items: center;
     justify-content: center;
-    color: #fff;
-    background-color: #505050;
+    color: #273A8B;
+    background-color: #fff;
     padding: 10px;
-    border: solid;
-    border-radius: 15px;
-    border-color: gray;
-    margin: 5px;
+    border: 1px dashed;
+    border-color: #273A8B;
+    margin: 0px;
+
+}
+
+.app_column_top {
+    border-width: 1px 1px 0 1px;
+}
+
+.app_column_round_top {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.app_column_round_bottom {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
 
 .nested_list {

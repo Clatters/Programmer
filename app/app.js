@@ -14,7 +14,7 @@ var data = {
     platforms: [],
     examples: [],
     no_device: true,
-    sel_platform: null,
+    sel_platform: 'sibilla',
     sel_example: null,
     firmwareFile: null,
     blinkFirmwareFile: null,
@@ -143,7 +143,9 @@ var app = new Vue({
     el: '#app',
     template: 
     `
-    <b-container class="app_body">
+    <b-container class="app_body" style="max-width:800px">
+    <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
+    
     <div align="center">
         <button id="detach" disabled="true" hidden="true">Detach DFU</button>
         <button id="upload" disabled="true" hidden="true">Upload</button>
@@ -164,109 +166,94 @@ var app = new Vue({
             </div>
         </b-form>
     </div>
-    <b-row align="center" class="app_column">
-        <div>
-            <legend>Daisy Web Programmer</legend>
-            <p> Connect to the Daisy - If this is your first time here, follow the steps in Help section below </p>
-            <p><b-button variant="es" id="connect"> Connect</b-button></p>
-            <dialog id="interfaceDialog">
-                Your device has multiple DFU interfaces. Select one from the list below:
-                <b-form id="interfaceForm" method="dialog">
-                    <b-button id="selectInterface" type="submit">Select interface</b-button>
-                </b-form>
-            </dialog>
-            <div id="usbInfo" hidden="true" style="white-space: pre"></div>
-            <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
-            <div>
-                <b-button variant="es" v-b-toggle.collapseHelp>Display Help</b-button>
-                <b-collapse id="collapseHelp">
-                    <div class="nested_list">
-                        <h2>Usage:</h2>
-                        <ol>
-                            <li><p>Connect the Daisy to the Computer</p></li>
-                            <li><p>Enter the system bootloader by holding the BOOT button down, and then pressing, and releasing the RESET button.</p></li>
-                            <li><p>Click the Connect button at the top of the page.</p></li>
-                            <li><p>Select, "DFU in FS Mode"</p></li>
-                            <li>
-                                <p>Now do either of the following:</p>
-                                <ul>
-                                    <li><p>Flash the blink example</p></li>
-                                    <li><p>Select a platform and an example from the drop down menu (descriptions, diagrams, etc. coming soon)</p></li>
-                                    <li><p>Click the Choose File button, and select the .bin file you would like to flash. This can be found in a projects "build" folder.</p></li>
-                                </ul>
-                            </li>
-                            <li><p>Click Program, and wait for the progress bar to finish.</p></li>
-                            <li><p>Now, if the program does not start immediatley, pressing RESET on the Daisy will cause the program to start running.</p></li>
-                        </ol>
-                        <p>
-                            On windows, you may have to update the driver to WinUSB.
+    
+    <b-row align="center" class="app_column app_column_top app_column_round_top">
 
-                            To do this, you can download the free software, Zadig. Instructions for this can be found on the DaisyWiki in the Windows toolchain instructions page.
-                        </p>
-                    </div>
-                </b-collapse>
-                <b-collapse id="collapseHelp">
-                    <div class="nested_list">
-                        <h1>Requirements</h1>
-                        <p>In order to use this, you will need:</p>
-                        <ul>
-                            <li>
-                                <p>An up-to-date version of Chrome, at least version 61 or newer</p>
-                            </li>
-                            <li>
-                                <p>A Daisy Seed SOM. (The user-uploaded binary will work for any STM32 chip with a built in DFU bootloader).</p>
-                            </li>
-                        </ul>
-                    </div>
-                </b-collapse>
-            </div>
+      <h2>Sibilla Web Programmer<b-button style="float:right;" variant="es" v-b-toggle.collapseHelp><i class="fa fa-question-circle" aria-hidden="true"></i></b-button></h2>
+
+    </b-row>
+
+
+    <b-collapse id="collapseHelp" class="app_column app_column_top">
+        <div class="nested_list">
+            <h2>Setup and programming:</h2>
+            <p>Follow the steps below to upload a new firmware to your Sibilla (a micro USB type B cable is required; be sure it's a data transfer cable):</p>
+            <ol>
+                <li><p>Turn off the power of your eurorack case</p></li>
+                <li><p>Remove the power connector on the back of Sibilla</p></li>
+                <li><p>Connect Sibilla to your computer via USB</p></li>
+                <li><p>Hold the <b><i>BOOT</i></b> button down on the back of the module, and then press and release the <b><i>RESET</i></b> button. Release the <b><i>BOOT</i></b> button</p></li>
+                <li><p>Click the <b><i>Connect</i></b> button on the top of this page and then click and select "DFU in FS mode" on the pop-up window</p></li>
+                <li><p>Select a firmware version do you prefere from the menu below</p></li>
+                <li><p>Click Program and wait for the progress bar to finish</p></li>
+            </ol>
+            <p>
+                On windows, you may have to update the driver to WinUSB.<br/>
+                To do this, you can download the free software, Zadig. Instructions for this can be found on the DaisyWiki in the Windows toolchain instructions page.
+            </p>
+            <p>
+              You'll get the message "Programming done!" once the uploading process is finished. Sibilla will now start to operate according to the uploaded firmware.<br/>
+              Please note that not all its functions will be active with the USB power line. To fully test your new uploaded code, disconnect the USB from the module and plug Sibilla back into your eurorack case.
+            </p>
         </div>
-        </b-row>
-        <b-row align="between">
-            <b-col align="center" class="app_column">
-                <b-container>
-                    <b-row class="p-2">
-                        <legend>Getting Started? Flash the Blink example!</legend>
-                        <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>
-                    </b-row>
-                    <hr>
-                    <b-row class="p-2">
-                        <legend> Or select a platform and a program from the menu below.</legend>
-                        <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector">
-                            <template v-slot:first>
-                                <b-form-select-option :value="null" disabled>-- Platform --</b-form-select-option>
-                            </template>
-                            <option v-for="platform in platforms" :value="platform">{{platform}}</option>
-                        </b-form-select>
-                        <b-form-select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
-                            <template v-slot:first>
-                                <b-form-select-option :value="null" disabled>-- Example --</b-form-select-option>
-                            </template>
-                            <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
-                        </b-form-select>
-                    </b-row>
-                    <hr>
-                    <b-row class="p-2">
-                        <legend> Or select a file from your computer</legend>
-                            <b-form-file
-                                id="firmwareFile"
-                                v-model="firmwareFile"
-                                :state="Boolean(firmwareFile)"
-                                placeholder="Choose or drop a file..."
-                                drop-placeholder="Drop file here..."
-                            ></b-form-file>
-                    </b-row>
-                </b-container>
-            </b-col>
-        </b-row>
-        <b-row>
-        <b-col align="center" class="app_column">
-        <b-container align="center">
-            <legend>Programming Section</legend>
+    </b-collapse>
+    
+    <b-row align="center" class="app_column app_column_top">
+      <b-container>
+        <legend>1. Connect Sibilla to your computer</legend>
+        <p><b-button variant="es" id="connect"> Connect</b-button></p>
+        <dialog id="interfaceDialog">
+            Your device has multiple DFU interfaces. Select "DFU in FS mode" from the list below:
+            <b-form id="interfaceForm" method="dialog">
+                <b-button id="selectInterface" type="submit">Select interface</b-button>
+            </b-form>
+        </dialog>
+        <div id="usbInfo" hidden="true" style="white-space: pre"></div>
+        <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
+       </b-container>
+    </b-row>
+
+    <b-row align="center" class="app_column app_column_top">
+      <b-container>
+          <b-row class="p-2" style="display:none;">
+              <legend>Getting Started!!! Flash the Blink example!</legend>
+              <div><b-button variant="es" id="blink"  :disabled="no_device">Flash Blink!</b-button></div>
+          </b-row>
+          <b-row class="p-2" style="max-width:500px;">
+              <legend>2. Select a firmware version to upload</legend>
+              <b-form-select placeholder="Platform" v-model="sel_platform" textContent="Select a platform" id="platformSelector" style="display:none;">
+                  <option v-for="platform in platforms" :value="platform">{{platform}}</option>
+              </b-form-select>
+              <b-form-select v-model="sel_example" id="firmwareSelector" required @change="programChanged">
+                  <template v-slot:first>
+                      <b-form-select-option :value="null" disabled>-- Firmware version --</b-form-select-option>
+                  </template>
+                  <b-form-select-option v-for="example in platformExamples" v-bind:key="example.name" :value="example">{{example.name}}</b-form-select-option>
+              </b-form-select>
+          </b-row>
+          <b-row class="p-2">
+              <div id = "readme"></div>
+          </b-row>
+          <b-row class="p-2" style="display:none;">
+              <legend> Or select a file from your computer</legend>
+                  <b-form-file
+                      id="firmwareFile"
+                      v-model="firmwareFile"
+                      :state="Boolean(firmwareFile)"
+                      placeholder="Choose or drop a file..."
+                      drop-placeholder="Drop file here..."
+                  ></b-form-file>
+          </b-row>
+      </b-container>
+    </b-row>
+        
+        <b-row align="center" class="app_column app_column_round_bottom">
+        <b-container>
+            <legend>3. Program it!</legend>
             <b-button id="download" variant='es' :disabled="no_device || !sel_example"> Program</b-button>
 
-            <br> <br>
-            <b-button variant="es" v-b-toggle.collapseAdvanced>Advanced...</b-button>
+
+            <b-button variant="es" v-b-toggle.collapseAdvanced style="display:none;">Advanced...</b-button>
             <b-collapse id="collapseAdvanced">
                 <br> <div> <b-button variant="es" id="bootloader"  :disabled="no_device">Flash Bootloader Image</b-button> </div>                        
             </b-collapse>
@@ -281,9 +268,9 @@ var app = new Vue({
                 </div>
             <br>
             </div>
-            <div><div id = "readme"></div> </div>
+
         </b-container>
-        </b-col>
+        
         </b-row>
     </b-row>        
     
@@ -318,7 +305,7 @@ var app = new Vue({
             // New code below:
             // Get Source list as data 
             var self = this // assign self to 'this' before nested function calls...
-            var src_url = getRootUrl().split("?")[0].concat("data/sources.json") //need to strip out query string
+            var src_url = getRootUrl().split("?")[0].replace("index.html", "").concat("data/sources.json") //need to strip out query string
             var raw = new XMLHttpRequest();
             raw.open("GET", src_url, true);
             raw.responseType = "text"
@@ -351,7 +338,7 @@ var app = new Vue({
                                     self.examples.push(ex_dat)
                                 })
                                 unique_platforms.forEach( function(u_plat) {
-                                    if (!self.platforms.includes(u_plat)) {
+                                    if (!self.platforms.includes(u_plat) && u_plat == 'sibilla') {
                                         self.platforms.push(u_plat)
                                     }
                                 })

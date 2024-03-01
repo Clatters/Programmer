@@ -4,5 +4,11 @@
         "data_url": "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master/dist/examples.json",
         "repo_url": "https://raw.githubusercontent.com/electro-smith/DaisyExamples/master/",
         "bootloader_url": "https://raw.githubusercontent.com/electro-smith/Programmer/gh-pages/data/dsy_bootloader_v5_4.bin"
+    },
+    {
+        "name": "DaisyExamples", 		
+        "data_url": "https://clattersmachines.com/Programmer/data/Clatters/custom.json",
+        "repo_url": "https://clattersmachines.com/Programmer/data/Clatters/",
+        "bootloader_url": "https://raw.githubusercontent.com/electro-smith/Programmer/gh-pages/data/dsy_bootloader_v5_4.bin"
     }
 ]
